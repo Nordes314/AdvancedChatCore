@@ -1,0 +1,14 @@
+.idea/
+*.iml
+*.ipr
+*.iws
+lib/
+run/
+out/
+bin/
+build/
+.gradle/
+classes/
+lombok.config
+extra.properties
+swear_words.csv

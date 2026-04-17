@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "id": "advancedchatcore",
+  "version": "${version}",
+  "name": "AdvancedChatCore",
+  "description": "The core of all AdvancedChat features",
+  "authors": [
+    "DarkKronicle",
+    "EnricoMessall"
+  ],
+  "contact": {
+    "homepage": "https://arematics.com",
+    "sources": "https://github.com/Arematics/AdvancedChatCore",
+    "issues": "https://github.com/Arematics/AdvancedChatCore/issues"
+  },
+  "license": "MPL-v2",
+  "icon": "assets/advancedchatcore/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "io.github.darkkronicle.advancedchatcore.AdvancedChatCore"
+    ],
+    "modmenu": [
+      "io.github.darkkronicle.advancedchatcore.config.gui.ModMenuImpl"
+    ]
+  },
+  "mixins": [
+    "advancedchatcore.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.15.11",
+    "fabric": "*",
+    "minecraft": ">=1.21",
+    "malilib": ">=0.20.0"
+  }
+}
