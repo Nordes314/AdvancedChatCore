@@ -1,3 +1,7 @@
+Forked by [@ItsCryptic1](https://gitlab.com/ItsCryptic1) on Gitlab
+
+THIS IS A REUPLOAD!
+
 # AdvancedChatCore
 
 This is the base mod of all AdvancedChat modules and features. This mod provides the necessary foundation and framework for AdvancedChat mod's to work.
