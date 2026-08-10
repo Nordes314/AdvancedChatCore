@@ -16,9 +16,9 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import com.mojang.blaze3d.vertex.PoseStack;
 
 /** A simple button */
 @EqualsAndHashCode(callSuper = false)
@@ -28,7 +28,7 @@ public class CleanButton extends ButtonBase {
 
     protected Color baseColor;
 
-    private MinecraftClient client = MinecraftClient.getInstance();
+    private Minecraft client = Minecraft.getInstance();
 
     /**
      * Constructs a new simple clean button
@@ -38,7 +38,7 @@ public class CleanButton extends ButtonBase {
      * @param width Width
      * @param height Height
      * @param baseColor Color that it should render when not hovered
-     * @param text Text to render
+     * @param text Component to render
      */
     public CleanButton(int x, int y, int width, int height, Color baseColor, String text) {
         super(x, y, width, height, text);

@@ -13,7 +13,7 @@ import fi.dy.masa.malilib.gui.interfaces.ISelectionListener;
 import fi.dy.masa.malilib.gui.widgets.WidgetListBase;
 import fi.dy.masa.malilib.gui.widgets.WidgetListEntryBase;
 import io.github.darkkronicle.advancedchatcore.interfaces.IClosable;
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;
 
 public abstract class CoreGuiListBase<
                 TYPE,
@@ -31,7 +31,7 @@ public abstract class CoreGuiListBase<
         this.width = width;
         this.height = height;
         this.clearElements();
-        this.clearAndInit();
+        this.rebuildWidgets();
     }
 
     @Override

@@ -1,19 +1,19 @@
 package io.github.darkkronicle.advancedchatcore.mixin;
 
 import io.github.darkkronicle.advancedchatcore.config.ConfigStorage;
-import net.minecraft.client.gui.hud.MessageIndicator;
+import net.minecraft.client.multiplayer.chat.GuiMessageTag;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(MessageIndicator.class)
+@Mixin(GuiMessageTag.class)
 public class MixinMessageIndicator {
 
     @Inject(method = "indicatorColor", at = @At("HEAD"), cancellable = true)
     private void getColor(CallbackInfoReturnable<Integer> ci) {
-        MessageIndicator indicator = ((MessageIndicator) (Object) this);
-        String name = indicator.loggedName();
+        GuiMessageTag indicator = ((GuiMessageTag) (Object) this);
+        String name = indicator.logTag();
         ci.setReturnValue(switch (name) {
             case "Modified" -> ConfigStorage.ChatScreen.MODIFIED.config.getColor().intValue;
             case "Filtered" -> ConfigStorage.ChatScreen.FILTERED.config.getColor().intValue;
@@ -25,7 +25,7 @@ public class MixinMessageIndicator {
     }
 
     @Inject(method = "icon", at = @At("HEAD"), cancellable = true)
-    private void getIcon(CallbackInfoReturnable<MessageIndicator.Icon> ci) {
+    private void getIcon(CallbackInfoReturnable<GuiMessageTag.Icon> ci) {
         if (!ConfigStorage.ChatScreen.SHOW_CHAT_ICONS.config.getBooleanValue()) {
             ci.setReturnValue(null);
         }

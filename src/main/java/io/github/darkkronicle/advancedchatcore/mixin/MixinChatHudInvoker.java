@@ -7,16 +7,16 @@
  */
 package io.github.darkkronicle.advancedchatcore.mixin;
 
-import net.minecraft.client.gui.hud.ChatHud;
-import net.minecraft.client.gui.hud.ChatHudLine;
+import net.minecraft.client.gui.components.ChatComponent;
+import net.minecraft.client.multiplayer.chat.GuiMessage;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
-@Mixin(ChatHud.class)
+@Mixin(ChatComponent.class)
 public interface MixinChatHudInvoker {
-    @Invoker("addVisibleMessage")
-    void invokeAddVisibleMessage(ChatHudLine message);
+    @Invoker("addMessageToDisplayQueue")
+    void invokeAddVisibleMessage(GuiMessage message);
 
-    @Invoker("addMessage")
-    void invokeAddMessage(ChatHudLine message);
+    @Invoker("addMessageToQueue")
+    void invokeAddMessage(GuiMessage message);
 }

@@ -13,8 +13,8 @@ import fi.dy.masa.malilib.render.RenderUtils;
 import java.util.Arrays;
 import java.util.List;
 
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import com.mojang.blaze3d.vertex.PoseStack;
 
 public class WidgetLabelHoverable extends WidgetLabel {
 

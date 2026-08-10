@@ -15,32 +15,47 @@ import java.util.List;
 import java.util.Optional;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.Font;
 
 public class WidgetIntBox extends GuiTextFieldGeneric {
 
     @Setter @Getter private Runnable apply = null;
 
-    public WidgetIntBox(int x, int y, int width, int height, TextRenderer textRenderer) {
+    public WidgetIntBox(int x, int y, int width, int height, Font textRenderer) {
         super(x, y, width, height, textRenderer);
-        this.setTextPredicate(
-                text -> {
-                    if (text.equals("")) {
-                        return true;
-                    }
-                    try {
-                        // Only allow numbers!
-                        Integer.valueOf(text);
-                    } catch (NumberFormatException e) {
-                        return false;
-                    }
-                    return true;
-                });
-        this.setDrawsBackground(true);
+        this.setBordered(true);
+    }
+
+    /**
+     * EditBox#setFilter was removed in 26.2, so the numbers-only rule is enforced by
+     * letting the insert happen and rolling it back when the result isn't an integer.
+     */
+    @Override
+    public void insertText(String text) {
+        String before = this.getValue();
+        int cursor = this.getCursorPosition();
+        super.insertText(text);
+        if (!isInteger(this.getValue())) {
+            super.setValue(before);
+            this.setCursorPosition(cursor);
+        }
+    }
+
+    private static boolean isInteger(String text) {
+        if (text.isEmpty()) {
+            return true;
+        }
+        try {
+            // Only allow numbers!
+            Integer.valueOf(text);
+        } catch (NumberFormatException e) {
+            return false;
+        }
+        return true;
     }
 
     public Integer getInt() {
-        String text = this.getText();
+        String text = this.getValue();
         if (text == null || text.length() == 0) {
             return null;
         }

@@ -6,17 +6,17 @@ import io.github.darkkronicle.advancedchatcore.util.Color;
 import io.github.darkkronicle.advancedchatcore.util.TextUtil;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.network.chat.Component;
 
 import java.util.LinkedHashMap;
 
 public class ContextMenu extends WidgetBase {
 
-    private final LinkedHashMap<Text, ContextConsumer> options;
-    private Text hoveredEntry = null;
+    private final LinkedHashMap<Component, ContextConsumer> options;
+    private Component hoveredEntry = null;
 
     @Getter
     private final int contextX;
@@ -36,11 +36,11 @@ public class ContextMenu extends WidgetBase {
     @Getter
     private Color hover;
 
-    public ContextMenu(int x, int y, LinkedHashMap<Text, ContextConsumer> options, Runnable close) {
+    public ContextMenu(int x, int y, LinkedHashMap<Component, ContextConsumer> options, Runnable close) {
         this(x, y, options, close, new Color(0, 0, 0, 200), new Color(255, 255, 255, 100));
     }
 
-    public ContextMenu(int x, int y, LinkedHashMap<Text, ContextConsumer> options, Runnable close, Color background, Color hover) {
+    public ContextMenu(int x, int y, LinkedHashMap<Component, ContextConsumer> options, Runnable close, Color background, Color hover) {
         super(x, y, 10, 10);
         this.contextX = x;
         this.contextY = y;
@@ -52,10 +52,10 @@ public class ContextMenu extends WidgetBase {
     }
 
     public void updateDimensions() {
-        setWidth(TextUtil.getMaxLengthString(options.keySet().stream().map(Text::getString).toList()) + 4);
-        setHeight(options.size() * (textRenderer.fontHeight + 2));
-        int windowWidth = MinecraftClient.getInstance().getWindow().getScaledWidth();
-        int windowHeight = MinecraftClient.getInstance().getWindow().getScaledHeight();
+        setWidth(TextUtil.getMaxLengthString(options.keySet().stream().map(Component::getString).toList()) + 4);
+        setHeight(options.size() * (textRenderer.lineHeight + 2));
+        int windowWidth = Minecraft.getInstance().getWindow().getGuiScaledWidth();
+        int windowHeight = Minecraft.getInstance().getWindow().getGuiScaledHeight();
         if (x + width > windowWidth) {
             x = windowWidth - width;
         }
@@ -65,7 +65,7 @@ public class ContextMenu extends WidgetBase {
     }
 
     @Override
-    public boolean onMouseClicked(Click click, boolean doubled) {
+    public boolean onMouseClicked(MouseButtonEvent click, boolean doubled) {
         boolean success = super.onMouseClicked(click, doubled);
         if (success) {
             return true;
@@ -76,7 +76,7 @@ public class ContextMenu extends WidgetBase {
     }
 
     @Override
-    protected boolean onMouseClickedImpl(Click click, boolean doubled) {
+    protected boolean onMouseClickedImpl(MouseButtonEvent click, boolean doubled) {
         if (click.button() != 0) {
             return false;
         }
@@ -94,13 +94,13 @@ public class ContextMenu extends WidgetBase {
         int rX = x + 2;
         int rY = y + 2;
         hoveredEntry = null;
-        for (Text option : options.keySet()) {
+        for (Component option : options.keySet()) {
             if (mouseX >= x && mouseX <= x + width && mouseY >= rY - 2 && mouseY < rY + fontHeight + 1) {
                 hoveredEntry = option;
-                drawRect(context, rX - 2, rY - 2, width, textRenderer.fontHeight + 2, hover.color());
+                drawRect(context, rX - 2, rY - 2, width, textRenderer.lineHeight + 2, hover.color());
             }
-            context.drawTextWithShadow(textRenderer, option, rX, rY, -1);
-            rY += textRenderer.fontHeight + 2;
+            context.text(textRenderer, option, rX, rY, -1);
+            rY += textRenderer.lineHeight + 2;
         }
     }
 
