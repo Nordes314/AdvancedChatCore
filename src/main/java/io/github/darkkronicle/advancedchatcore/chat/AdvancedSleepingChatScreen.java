@@ -11,10 +11,10 @@ import fi.dy.masa.malilib.gui.GuiBase;
 import fi.dy.masa.malilib.gui.button.ButtonGeneric;
 import fi.dy.masa.malilib.util.KeyCodes;
 import fi.dy.masa.malilib.util.StringUtils;
-import net.minecraft.client.gui.screen.ChatScreen;
-import net.minecraft.client.input.KeyInput;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket;
+import net.minecraft.client.gui.screens.ChatScreen;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.network.protocol.game.ServerboundPlayerCommandPacket;
 
 public class AdvancedSleepingChatScreen extends AdvancedChatScreen  {
 
@@ -38,17 +38,17 @@ public class AdvancedSleepingChatScreen extends AdvancedChatScreen  {
         this.stopSleeping();
     }
 
-    public boolean keyPressed(KeyInput input) {
+    public boolean keyPressed(KeyEvent input) {
         if (input.key() == KeyCodes.KEY_ESCAPE) {
             this.stopSleeping();
         } else if (input.key() == KeyCodes.KEY_ENTER || input.key() == KeyCodes.KEY_KP_ENTER) {
-            String string = this.chatField.getText().trim();
+            String string = this.chatField.getValue().trim();
             if (!string.isEmpty()) {
                 MessageSender.getInstance().sendMessage(string);
             }
 
             this.chatField.setText("");
-            this.client.inGameHud.getChatHud().resetScroll();
+            this.minecraft.gui.hud.getChat().resetChatScroll();
             // Prevents really weird interactions with chat history
             resetCurrentMessage();
             return true;
@@ -58,10 +58,10 @@ public class AdvancedSleepingChatScreen extends AdvancedChatScreen  {
     }
 
     private void stopSleeping() {
-        ClientPlayNetworkHandler clientPlayNetworkHandler = this.client.player.networkHandler;
-        clientPlayNetworkHandler.sendPacket(
-                new ClientCommandC2SPacket(
-                        this.client.player, ClientCommandC2SPacket.Mode.STOP_SLEEPING));
+        ClientPacketListener clientPlayNetworkHandler = this.minecraft.player.connection;
+        clientPlayNetworkHandler.send(
+                new ServerboundPlayerCommandPacket(
+                        this.minecraft.player, ServerboundPlayerCommandPacket.Action.STOP_SLEEPING));
         GuiBase.openGui(null);
     }
 }

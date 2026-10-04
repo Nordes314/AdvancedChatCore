@@ -1,15 +1,19 @@
 plugins {
-	id 'fabric-loom' version "${loom_version}"
+	id 'net.fabricmc.fabric-loom' version "${loom_version}"
 	id 'maven-publish'
-	id 'io.freefair.lombok' version '8.10'
+	id 'io.freefair.lombok' version '9.5.0'
 }
 
 java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
-    }
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(25)
+	}
+	sourceCompatibility = JavaVersion.VERSION_25
+	targetCompatibility = JavaVersion.VERSION_25
+}
+
+lombok {
+	version = project.lombok_version
 }
 
 version = "${project.minecraft_version}-${project.mod_version}"
@@ -23,41 +27,46 @@ if (file("extra.properties").exists()) {
 repositories {
 	mavenCentral()
 	maven { url 'https://masa.dy.fi/maven' }
+	maven { url 'https://masa.dy.fi/maven/sakura-ryoko' }
 	maven { url 'https://maven.terraformersmc.com/releases/' }
 	maven { url 'https://jitpack.io' }
 	maven { url 'https://maven.wispforest.io' }
-    maven { url 'https://maven.fallenbreath.me/releases' }
+	maven { url 'https://maven.fallenbreath.me/releases' }
+	maven { url 'https://api.modrinth.com/maven' }
 }
 
 dependencies {
+	// No `mappings` line: 26.2 is distributed unobfuscated, so Loom uses the
+	// official names directly. For the same reason mod dependencies are declared
+	// with the plain configurations rather than `modImplementation` — the `mod*`
+	// ones invoke Loom's remapper, which then demands a mappings dependency that
+	// no longer exists for this Minecraft version.
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
-	modImplementation "com.github.sakura-ryoko:malilib:${project.malilib_version}"
-	modCompileOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
+	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+	implementation "maven.modrinth:malilib:${project.malilib_version}"
+	compileOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
 
 	implementation "com.github.DarkKronicle.Konstruct:addons:${project.konstruct_version}"
 	implementation "com.github.DarkKronicle.Konstruct:core:${project.konstruct_version}"
-
-	implementation 'com.electronwill.night-config:toml:3.6.5'
-	// Transitive
-	include 'com.electronwill.night-config:toml:3.6.5'
-	include 'com.electronwill.night-config:core:3.6.5'
-
-
 	include "com.github.DarkKronicle.Konstruct:addons:${project.konstruct_version}"
 	include "com.github.DarkKronicle.Konstruct:core:${project.konstruct_version}"
+
+	implementation 'com.electronwill.night-config:toml:3.6.5'
+	include 'com.electronwill.night-config:toml:3.6.5'
+	include 'com.electronwill.night-config:core:3.6.5'
 
 	implementation "org.mariuszgromada.math:MathParser.org-mXparser:${project.mxparser_version}"
 	include "org.mariuszgromada.math:MathParser.org-mXparser:${project.mxparser_version}"
 
-	implementation "io.github.maowimpl:owo:${project.owo_version}"
-	include "io.github.maowimpl:owo:${project.owo_version}"
-
 	implementation 'org.apache.commons:commons-csv:1.8'
 	include 'org.apache.commons:commons-csv:1.8'
 
+	// No Java source in this repo imports owo, but Konstruct's bundled `addons` jar
+	// calls dev.maow.owo.util.OwOFactory at runtime, so it must stay on the jar-in-jar
+	// list or AdvancedChatKonstruct dies with NoClassDefFoundError.
+	implementation "io.github.maowimpl:owo:${project.owo_version}"
+	include "io.github.maowimpl:owo:${project.owo_version}"
 }
 
 processResources {
@@ -70,13 +79,10 @@ processResources {
 
 tasks.withType(JavaCompile).configureEach {
 	it.options.encoding = "UTF-8"
-	it.options.release = 21
+	it.options.release = 25
+	// Default cap is 100; during the 26.2 port we want the whole list at once.
+	it.options.compilerArgs << "-Xmaxerrs" << "10000"
 }
-
-//task sourcesJar(type: Jar, dependsOn: classes) {
-//	classifier = "sources"
-//	from sourceSets.main.allSource
-//}
 
 tasks.register('sourcesJar', Jar) {
 	dependsOn classes
@@ -85,7 +91,7 @@ tasks.register('sourcesJar', Jar) {
 }
 
 jar {
-    from "LICENSE.txt"
+	from "LICENSE.txt"
 }
 
 tasks.register('downloadExtra') {
@@ -104,12 +110,13 @@ publishing {
 	publications {
 		mavenJava(MavenPublication) {
 			artifactId = 'advancedchatcore'  // Set artifact ID in lowercase
-			// add all the jars that should be included when publishing to maven
-			artifact(remapJar) {
-				builtBy remapJar
+			// 26.2 needs no remapping, so `remapJar`/`remapSourcesJar` no longer
+			// exist and the plain jar tasks are the published artifacts.
+			artifact(jar) {
+				builtBy jar
 			}
 			artifact(sourcesJar) {
-				builtBy remapSourcesJar
+				builtBy sourcesJar
 			}
 		}
 	}

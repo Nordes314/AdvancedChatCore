@@ -28,8 +28,8 @@ import io.github.darkkronicle.advancedchatcore.util.StringMatch;
 import io.github.darkkronicle.advancedchatcore.util.TextUtil;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
 
 import java.util.*;
 
@@ -73,7 +73,7 @@ public class InitHandler implements IInitializationHandler {
                         new HashMap<>();
                 for (StringMatch bad : profanity) {
                     insertions.put(bad, (current, match) ->
-                            Text.literal("*".repeat(bad.end - bad.start)).fillStyle(current.getStyle())
+                            Component.literal("*".repeat(bad.end - bad.start)).withStyle(current.getStyle())
                     );
                 }
                 text = TextUtil.replaceStrings(text, insertions);
@@ -101,33 +101,35 @@ public class InitHandler implements IInitializationHandler {
 
         InputHandler.getInstance().addDisplayName("core_general", "advancedchatcore.config.tab.hotkeysgeneral");
         InputHandler.getInstance().add("core_general", ConfigStorage.Hotkeys.OPEN_CHAT.config, (action, key) -> {
-            if (MinecraftClient.getInstance().world == null) {
+            if (Minecraft.getInstance().level == null) {
                 return true;
             }
             GuiBase.openGui(new AdvancedChatScreen(""));
             return true;
         });
         InputHandler.getInstance().add("core_general", ConfigStorage.Hotkeys.OPEN_CHAT_WITH_LAST.config, (action, key) -> {
-            if (MinecraftClient.getInstance().world == null) {
+            if (Minecraft.getInstance().level == null) {
                 return true;
             }
             GuiBase.openGui(new AdvancedChatScreen(0));
             return true;
         });
         InputHandler.getInstance().add("core_general", ConfigStorage.Hotkeys.OPEN_CHAT_FREE_MOVEMENT.config, (action, key) -> {
-            if (MinecraftClient.getInstance().world == null) {
+            if (Minecraft.getInstance().level == null) {
                 return true;
             }
             // Manually update stuff so that movement keys are continued to be pressed
-            MinecraftClient client = MinecraftClient.getInstance();
-            if (client.currentScreen != null) {
-                client.currentScreen.removed();
+            Minecraft client = Minecraft.getInstance();
+            if (client.gui.screen() != null) {
+                client.gui.screen().removed();
             }
-            client.currentScreen = new AdvancedChatScreen(true);
-            client.mouse.unlockCursor();
-            client.currentScreen.init(client.getWindow().getScaledWidth(), client.getWindow().getScaledHeight());
-            client.skipGameRender = false;;
-            client.updateWindowTitle();
+            // 26.2 moved the current screen onto Gui and made the field private, so the
+            // old direct assignment (which deliberately skipped the normal open path) now
+            // has to go through Gui#setScreen. That handles init itself, so the manual
+            // init call is gone. Minecraft#noRender no longer exists.
+            client.gui.setScreen(new AdvancedChatScreen(true));
+            client.mouseHandler.releaseMouse();
+            client.updateTitle();
             return true;
         });
         InputHandler.getInstance().add("core_general", ConfigStorage.Hotkeys.TOGGLE_PERMANENT.config, (action, key) -> {

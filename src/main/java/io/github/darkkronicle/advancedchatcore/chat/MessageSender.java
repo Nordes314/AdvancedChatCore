@@ -9,7 +9,7 @@ package io.github.darkkronicle.advancedchatcore.chat;
 
 import io.github.darkkronicle.advancedchatcore.AdvancedChatCore;
 import io.github.darkkronicle.advancedchatcore.interfaces.IStringFilter;
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;
 import org.apache.logging.log4j.Level;
 
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ import java.util.Optional;
 public class MessageSender {
 
     private static final MessageSender INSTANCE = new MessageSender();
-    private final MinecraftClient client = MinecraftClient.getInstance();
+    private final Minecraft client = Minecraft.getInstance();
 
     public static MessageSender getInstance() {
         return INSTANCE;
@@ -48,7 +48,7 @@ public class MessageSender {
         if (string.length() > 256) {
             string = string.substring(0, 256);
         }
-        this.client.inGameHud.getChatHud().addToMessageHistory(unfiltered);
+        this.client.gui.hud.getChat().addRecentChat(unfiltered);
 
         if (string.isEmpty()) {
             AdvancedChatCore.LOGGER.log(Level.WARN, "Blank message was attempted to be sent. " + unfiltered);
@@ -57,9 +57,9 @@ public class MessageSender {
 
         if (client.player != null) {
             if (string.startsWith("/")) {
-                this.client.getNetworkHandler().sendChatCommand(string.substring(1));
+                this.client.getConnection().sendCommand(string.substring(1));
             } else {
-                this.client.getNetworkHandler().sendChatMessage(string);
+                this.client.getConnection().sendChat(string);
             }
         }
     }

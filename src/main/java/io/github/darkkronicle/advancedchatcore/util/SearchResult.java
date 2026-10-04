@@ -12,7 +12,7 @@ import io.github.darkkronicle.advancedchatcore.interfaces.IFinder;
 import lombok.Getter;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -147,7 +147,7 @@ public class SearchResult {
      * @param type {@link FindType} way to search
      * @return SearchResult with compiled searches
      */
-    public static SearchResult searchOf(Text input, String match, FindType type) {
+    public static SearchResult searchOf(Component input, String match, FindType type) {
         IFinder finder = type.getFinder();
         List<StringMatch> matches = finder.getMatches(input, match);
         return new SearchResult(input.getString(), match, finder, matches);

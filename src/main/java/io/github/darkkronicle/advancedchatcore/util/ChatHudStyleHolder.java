@@ -1,6 +1,6 @@
 package io.github.darkkronicle.advancedchatcore.util;
 
-import net.minecraft.text.Style;
+import net.minecraft.network.chat.Style;
 import org.jspecify.annotations.Nullable;
 
 public class ChatHudStyleHolder {

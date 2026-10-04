@@ -1,33 +1,33 @@
 package io.github.darkkronicle.advancedchatcore.util;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.input.SystemKeycodes;
-import net.minecraft.client.util.InputUtil;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.input.InputQuirks;
+import com.mojang.blaze3d.platform.InputConstants;
 
 public class ModifierKeyUtil {
     public static boolean hasControlDown() {
-        if (SystemKeycodes.IS_MAC_OS) {
-            return InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow(), 343)
-                    || InputUtil.isKeyPressed(
-                    MinecraftClient.getInstance().getWindow(),
+        if (InputQuirks.REPLACE_CTRL_KEY_WITH_CMD_KEY) {
+            return InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), 343)
+                    || InputConstants.isKeyDown(
+                    Minecraft.getInstance().getWindow(),
                     347
             );
         } else {
-            return InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow(), 341)
-                    || InputUtil.isKeyPressed(
-                    MinecraftClient.getInstance().getWindow(),
+            return InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), 341)
+                    || InputConstants.isKeyDown(
+                    Minecraft.getInstance().getWindow(),
                     345
             );
         }
     }
 
     public static boolean hasShiftDown() {
-        return InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow(), 340)
-                || InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow(), 344);
+        return InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), 340)
+                || InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), 344);
     }
 
     public static boolean hasAltDown() {
-        return InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow(), 342)
-                || InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow(), 346);
+        return InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), 342)
+                || InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), 346);
     }
 }

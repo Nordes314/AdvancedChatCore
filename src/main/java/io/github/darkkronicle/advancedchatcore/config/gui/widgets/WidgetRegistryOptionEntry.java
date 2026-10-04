@@ -22,9 +22,9 @@ import io.github.darkkronicle.advancedchatcore.util.Colors;
 import java.util.List;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.screens.Screen;
+import com.mojang.blaze3d.vertex.PoseStack;
 
 @Environment(EnvType.CLIENT)
 public class WidgetRegistryOptionEntry<T extends ConfigRegistryOption<?>>

@@ -6,12 +6,12 @@ import io.github.darkkronicle.advancedchatcore.util.Color;
 import io.github.darkkronicle.advancedchatcore.util.Colors;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gl.RenderPipelines;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.sound.PositionedSoundInstance;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.resources.Identifier;
 
 import java.util.function.Consumer;
 
@@ -72,12 +72,12 @@ public class IconButton extends CleanButton {
 
         context.fill(x, y, x + width, y + height, plusBack.color());
 
-        context.drawTexture(RenderPipelines.GUI_TEXTURED, icon, x + padding, y + padding, 0, 0,
+        context.blit(RenderPipelines.GUI_TEXTURED, icon, x + padding, y + padding, 0, 0,
                 width - (padding * 2), height - (padding * 2), iconWidth, iconHeight, iconWidth, iconHeight);
 
         if (hovered && onHover != null) {
-            context.drawCenteredTextWithShadow(
-                    MinecraftClient.getInstance().textRenderer,
+            context.drawCenteredString(
+                    Minecraft.getInstance().font,
                     onHover,
                     mouseX + 4,
                     mouseY - 16,
@@ -86,8 +86,8 @@ public class IconButton extends CleanButton {
     }
 
     @Override
-    protected boolean onMouseClickedImpl(Click click, boolean doubled) {
-        this.mc.getSoundManager().play(PositionedSoundInstance.ui(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+    protected boolean onMouseClickedImpl(MouseButtonEvent click, boolean doubled) {
+        this.mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
         onClick.accept(this);
         return true;
     }

@@ -13,9 +13,9 @@ import fi.dy.masa.malilib.util.StringUtils;
 import io.github.darkkronicle.advancedchatcore.util.Color;
 import io.github.darkkronicle.advancedchatcore.util.Colors;
 import java.util.Optional;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import com.mojang.blaze3d.vertex.PoseStack;
 
 public class WidgetColor extends GuiTextFieldGeneric {
 
@@ -23,16 +23,16 @@ public class WidgetColor extends GuiTextFieldGeneric {
     private Color currentColor;
 
     public WidgetColor(
-            int x, int y, int width, int height, Color color, TextRenderer textRenderer) {
+            int x, int y, int width, int height, Color color, Font textRenderer) {
         super(x, y, width - 22, height, textRenderer);
         this.colorX = x + width - 20;
         this.currentColor = color;
-        setText(String.format("#%08X", this.currentColor.color()));
+        setValue(String.format("#%08X", this.currentColor.color()));
     }
 
     @Override
-    public void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
-        super.renderWidget(context, mouseX, mouseY, delta);
+    public void extractWidgetRenderState(GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
+        super.extractWidgetRenderState(context, mouseX, mouseY, delta);
         int y = this.y;
         RenderUtils.drawRect(this.colorX, y, 19, 19, 0xFFFFFFFF);
         RenderUtils.drawRect(this.colorX + 1, y + 1, 17, 17, 0xFF000000);
@@ -40,8 +40,8 @@ public class WidgetColor extends GuiTextFieldGeneric {
     }
 
     @Override
-    public void write(String text) {
-        super.write(text);
+    public void insertText(String text) {
+        super.insertText(text);
         getAndRefreshColor4f();
     }
 
@@ -51,12 +51,12 @@ public class WidgetColor extends GuiTextFieldGeneric {
     }
 
     public Color getAndRefreshColor4f() {
-        Optional<Color> color = Colors.getInstance().getColor(getText());
+        Optional<Color> color = Colors.getInstance().getColor(getValue());
         if (color.isPresent()) {
             this.currentColor = color.get();
             return this.currentColor;
         }
-        this.currentColor = new Color(StringUtils.getColor(getText(), 0));
+        this.currentColor = new Color(StringUtils.getColor(getValue(), 0));
         return this.currentColor;
     }
 }

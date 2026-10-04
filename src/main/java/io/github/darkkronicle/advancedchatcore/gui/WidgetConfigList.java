@@ -14,10 +14,10 @@ import fi.dy.masa.malilib.gui.wrappers.TextFieldWrapper;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.input.KeyInput;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.KeyEvent;
 
 public abstract class WidgetConfigList<TYPE, WIDGET extends WidgetConfigListEntry<TYPE>>
         extends WidgetListBase<TYPE, WIDGET> {
@@ -41,7 +41,7 @@ public abstract class WidgetConfigList<TYPE, WIDGET extends WidgetConfigListEntr
         this.width = width;
         this.height = height;
         this.clearElements();
-        this.clearAndInit();
+        this.rebuildWidgets();
     }
 
     @Override
@@ -62,13 +62,13 @@ public abstract class WidgetConfigList<TYPE, WIDGET extends WidgetConfigListEntr
     }
 
     @Override
-    public boolean onMouseClicked(Click click, boolean doubled) {
+    public boolean onMouseClicked(MouseButtonEvent click, boolean doubled) {
         clearTextFieldFocus();
         return super.onMouseClicked(click, doubled);
     }
 
     @Override
-    public boolean onKeyTyped(KeyInput input) {
+    public boolean onKeyTyped(KeyEvent input) {
         for (WidgetConfigListEntry<TYPE> widget : this.listWidgets) {
             if (widget.onKeyTyped(input)) {
                 return true;

@@ -19,10 +19,10 @@ import lombok.Getter;
 import lombok.Setter;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.input.CharInput;
-import net.minecraft.client.input.KeyInput;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
 
 @Environment(EnvType.CLIENT)
 public abstract class WidgetConfigListEntry<TYPE> extends WidgetListEntryBase<TYPE> {
@@ -126,7 +126,7 @@ public abstract class WidgetConfigListEntry<TYPE> extends WidgetListEntryBase<TY
     }
 
     @Override
-    protected boolean onKeyTypedImpl(KeyInput input) {
+    protected boolean onKeyTypedImpl(KeyEvent input) {
         if (getTextFields() == null) {
             return false;
         }
@@ -139,7 +139,7 @@ public abstract class WidgetConfigListEntry<TYPE> extends WidgetListEntryBase<TY
     }
 
     @Override
-    protected boolean onCharTypedImpl(CharInput input) {
+    protected boolean onCharTypedImpl(CharacterEvent input) {
         if (getTextFields() != null) {
             for (TextFieldWrapper<GuiTextFieldGeneric> field : getTextFields()) {
                 if (field != null && field.onCharTyped(input)) {
@@ -152,7 +152,7 @@ public abstract class WidgetConfigListEntry<TYPE> extends WidgetListEntryBase<TY
     }
 
     @Override
-    protected boolean onMouseClickedImpl(Click click, boolean doubled) {
+    protected boolean onMouseClickedImpl(MouseButtonEvent click, boolean doubled) {
         if (super.onMouseClickedImpl(click, doubled)) {
             return true;
         }
@@ -178,12 +178,12 @@ public abstract class WidgetConfigListEntry<TYPE> extends WidgetListEntryBase<TY
         return ret;
     }
 
-    protected void drawTextFields(int mouseX, int mouseY, DrawContext context) {
+    protected void drawTextFields(int mouseX, int mouseY, GuiGraphicsExtractor context) {
         if (getTextFields() == null) {
             return;
         }
         for (TextFieldWrapper<GuiTextFieldGeneric> field : getTextFields()) {
-            field.textField().render(context, mouseX, mouseY, 0f);
+            field.textField().extractRenderState(context, mouseX, mouseY, 0f);
         }
     }
 }

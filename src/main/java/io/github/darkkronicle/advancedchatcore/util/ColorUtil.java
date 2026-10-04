@@ -8,7 +8,8 @@
 package io.github.darkkronicle.advancedchatcore.util;
 
 import lombok.experimental.UtilityClass;
-import net.minecraft.util.Formatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.TextColor;
 
 /**
  * A static utility class that helps when dealing with colors that use bit shifting, like Minecraft.
@@ -56,7 +57,9 @@ public class ColorUtil {
         return color.withAlpha((int) Math.floor((alpha * percent)));
     }
 
-    public Color colorFromFormatting(Formatting formatting) {
-        return new Color(formatting.getColorValue());
+    public Color colorFromFormatting(ChatFormatting formatting) {
+        TextColor color = TextColor.fromLegacyFormat(formatting);
+        // Formatting-only codes (bold, italic, ...) carry no colour
+        return color == null ? new Color(0) : new Color(color.getValue());
     }
 }
